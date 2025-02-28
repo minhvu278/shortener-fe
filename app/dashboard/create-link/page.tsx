@@ -25,7 +25,7 @@ const CreateShortLink = () => {
   const [password, setPassword] = useState("");
   const [expiresAt, setExpiresAt] = useState("");
   const [generateQrCode, setGenerateQrCode] = useState(false);
-  const [title, setTitle] = useState(""); // Thêm state cho title
+  const [title, setTitle] = useState("");
   const [shortUrl, setShortUrl] = useState("");
   const [qrCode, setQrCode] = useState("");
   const [loading, setLoading] = useState(false);
@@ -34,7 +34,29 @@ const CreateShortLink = () => {
   const [openPopup, setOpenPopup] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
 
+  const validateForm = () => {
+    const errors: { [key: string]: string } = {};
+
+    if (!originalUrl.trim()) {
+      errors.originalUrl = "URL dài là bắt buộc.";
+    } else {
+      // Kiểm tra URL hợp lệ (tùy chọn)
+      try {
+        new URL(originalUrl);
+      } catch (err) {
+        errors.originalUrl = "URL không hợp lệ.";
+      }
+    }
+
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0; // Trả về true nếu không có lỗi
+  };
+
   const handleShorten = async () => {
+    if (!validateForm()) {
+      return;
+    }
+
     setLoading(true);
     setGeneralError(null);
     setFieldErrors({});
@@ -46,7 +68,7 @@ const CreateShortLink = () => {
         password: password || undefined,
         expiresAt: expiresAt || undefined,
         generateQrCode,
-        title: title || undefined, // Gửi title lên BE
+        title: title || undefined,
       });
 
       setShortUrl(response.data.shortUrl);
@@ -70,8 +92,16 @@ const CreateShortLink = () => {
   };
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(shortUrl);
-    setCopySuccess(true);
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(shortUrl).then(() => {
+        setCopySuccess(true);
+      }).catch((err) => {
+        console.error("Copy Error:", err);
+        alert("Failed to copy link. Please copy manually.");
+      });
+    } else {
+      alert("Clipboard API không được hỗ trợ. Vui lòng sao chép thủ công: " + shortUrl);
+    }
   };
 
   return (
@@ -88,13 +118,14 @@ const CreateShortLink = () => {
         error={!!fieldErrors.originalUrl}
         helperText={fieldErrors.originalUrl}
         sx={{ mb: 2 }}
+        required // Thêm required để hiển thị dấu * trên UI
       />
 
       <TextField
         label="Tiêu đề (Tùy chọn)"
         fullWidth
         value={title}
-        onChange={(e) => setTitle(e.target.value)} // Thêm TextField cho title
+        onChange={(e) => setTitle(e.target.value)}
         error={!!fieldErrors.title}
         helperText={fieldErrors.title}
         sx={{ mb: 2 }}
@@ -148,7 +179,6 @@ const CreateShortLink = () => {
         </Typography>
       )}
 
-      {/* Popup hiển thị link rút gọn */}
       <Dialog open={openPopup} onClose={() => setOpenPopup(false)} sx={{ "& .MuiDialog-paper": { borderRadius: 4, maxWidth: "500px", p: 2 } }}>
         <DialogTitle sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 20, fontWeight: "bold", color: "#333" }}>
           🎉 Link rút gọn thành công
@@ -180,7 +210,6 @@ const CreateShortLink = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Thông báo copy thành công */}
       <Snackbar open={copySuccess} autoHideDuration={2000} onClose={() => setCopySuccess(false)}>
         <Alert severity="success">Đã sao chép link!</Alert>
       </Snackbar>
