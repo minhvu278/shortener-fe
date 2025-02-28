@@ -1,7 +1,21 @@
-"use client"
+"use client";
 
 import { useState } from "react";
-import { TextField, Button, FormControlLabel, Switch, Box, Typography, Paper, Dialog, DialogTitle, DialogContent, IconButton, Snackbar, Alert } from "@mui/material";
+import {
+  TextField,
+  Button,
+  FormControlLabel,
+  Switch,
+  Box,
+  Typography,
+  Paper,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  IconButton,
+  Snackbar,
+  Alert,
+} from "@mui/material";
 import { ContentCopy, Close } from "@mui/icons-material";
 import { api } from "@/utils/api";
 
@@ -11,6 +25,7 @@ const CreateShortLink = () => {
   const [password, setPassword] = useState("");
   const [expiresAt, setExpiresAt] = useState("");
   const [generateQrCode, setGenerateQrCode] = useState(false);
+  const [title, setTitle] = useState(""); // Thêm state cho title
   const [shortUrl, setShortUrl] = useState("");
   const [qrCode, setQrCode] = useState("");
   const [loading, setLoading] = useState(false);
@@ -31,6 +46,7 @@ const CreateShortLink = () => {
         password: password || undefined,
         expiresAt: expiresAt || undefined,
         generateQrCode,
+        title: title || undefined, // Gửi title lên BE
       });
 
       setShortUrl(response.data.shortUrl);
@@ -41,10 +57,8 @@ const CreateShortLink = () => {
         const { message, errors } = err.response.data;
 
         if (errors) {
-          // Nếu lỗi là từ các field cụ thể
           setFieldErrors(errors);
         } else if (message) {
-          // Nếu lỗi là lỗi chung
           setGeneralError(message);
         }
       } else {
@@ -73,6 +87,16 @@ const CreateShortLink = () => {
         onChange={(e) => setOriginalUrl(e.target.value)}
         error={!!fieldErrors.originalUrl}
         helperText={fieldErrors.originalUrl}
+        sx={{ mb: 2 }}
+      />
+
+      <TextField
+        label="Tiêu đề (Tùy chọn)"
+        fullWidth
+        value={title}
+        onChange={(e) => setTitle(e.target.value)} // Thêm TextField cho title
+        error={!!fieldErrors.title}
+        helperText={fieldErrors.title}
         sx={{ mb: 2 }}
       />
 
