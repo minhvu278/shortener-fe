@@ -5,6 +5,7 @@ import { Box, Typography, TextField, Button, FormControl, InputLabel, Select, Me
 import Link from "next/link";
 import { Link as LinkType } from "@/types/link";
 import LinkItem from "@/components/LinkItem";
+import { api } from "@/utils/api";
 
 export default function LinksPage() {
   const [search, setSearch] = useState<string>("");
@@ -17,50 +18,43 @@ export default function LinksPage() {
   const [limit] = useState<number>(10); // Số link mỗi trang
   const [total, setTotal] = useState<number>(0); // Tổng số link
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
-
   useEffect(() => {
     async function fetchLinks() {
       try {
-        const response = await fetch(`${API_URL}/links?page=${page}&limit=${limit}`, {
-          headers: { "X-Requested-With": "XMLHttpRequest" },
-        });
-        if (!response.ok) {
-          throw new Error("Failed to fetch links");
-        }
-        const data = await response.json();
-        console.log("Links fetched:", data);
+        const response = await api.get(`/links?page=${page}&limit=${limit}`);
 
-        if (data.links && Array.isArray(data.links)) {
-          setLinks(data.links);
-          setFilteredLinks(data.links);
-          setTotal(data.total || 0);
+        if (response.data.links && Array.isArray(response.data.links)) {
+          setLinks(response.data.links);
+          setFilteredLinks(response.data.links);
+          setTotal(response.data.total || 0);
         } else {
           throw new Error("Invalid response format: Expected an array of links");
         }
         setLoading(false);
-      } catch (err) {
-        console.error("Fetch Links Error:", err);
+      } catch (err: any) {
+        console.error("Fetch Links Error:", {
+          message: err.message,
+          status: err.response?.status,
+          data: err.response?.data,
+        });
         setError("Không thể tải danh sách link.");
         setLoading(false);
       }
     }
 
     fetchLinks();
-  }, [page, limit]); // Gọi lại API khi page thay đổi
+  }, [page, limit]);
 
   // Lọc link theo search và filter
   useEffect(() => {
     let result = links;
 
-    // Lọc theo trạng thái (active/inactive)
     if (filter === "active") {
       result = result.filter((link) => !link.expiresAt || new Date(link.expiresAt) > new Date());
     } else if (filter === "inactive") {
       result = result.filter((link) => link.expiresAt && new Date(link.expiresAt) <= new Date());
     }
 
-    // Lọc theo search
     result = result.filter(
       (link) =>
         (link.title?.toLowerCase().includes(search.toLowerCase()) || false) ||
@@ -96,9 +90,8 @@ export default function LinksPage() {
 
   return (
     <Box sx={{ p: 3 }}>
-      {/* Tiêu đề + Tìm kiếm */}
       <Typography variant="h5" fontWeight="bold" gutterBottom>
-        BB Links
+        Bitly Links
       </Typography>
       <Box sx={{ display: "flex", gap: 2, mb: 3, alignItems: "center" }}>
         <TextField
@@ -122,7 +115,6 @@ export default function LinksPage() {
         </Button>
       </Box>
 
-      {/* Danh sách link */}
       {filteredLinks.length > 0 ? (
         filteredLinks.map((link) => <LinkItem key={link.id} link={link} />)
       ) : (
@@ -136,7 +128,6 @@ export default function LinksPage() {
         </Box>
       )}
 
-      {/* Phân trang */}
       {filteredLinks.length > 0 && total > 0 && (
         <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
           <Pagination

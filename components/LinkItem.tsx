@@ -3,7 +3,6 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import ShareIcon from "@mui/icons-material/Share";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { Link as LinkType } from "@/types/link";
-import { useState } from "react";
 
 interface LinkItemProps {
   link: LinkType;
@@ -12,7 +11,6 @@ interface LinkItemProps {
 export default function LinkItem({ link }: LinkItemProps) {
   const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
   const shortUrl = `${API_URL}/${link.shortCode}`;
-  const [shareMessage, setShareMessage] = useState<string | null>(null);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(shortUrl);
@@ -30,14 +28,13 @@ export default function LinkItem({ link }: LinkItemProps) {
         title: link.title || "Short Link",
         url: shortUrl,
       });
-      setShareMessage("Chia sẻ thành công!");
+      console.log("Share successful");
     } catch (err: any) {
       if (err.name === "AbortError") {
-        setShareMessage("Đã hủy chia sẻ.");
+        console.log("Share canceled by user");
         return;
       }
       console.error("Share Error:", err);
-      setShareMessage("Có lỗi khi chia sẻ.");
     }
   };
 
@@ -68,11 +65,6 @@ export default function LinkItem({ link }: LinkItemProps) {
             No tags
           </Typography>
         </Box>
-        {shareMessage && (
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-            {shareMessage}
-          </Typography>
-        )}
       </CardContent>
       <Box sx={{ display: "flex", gap: 1, pr: 2 }}>
         <IconButton onClick={handleCopy}>
