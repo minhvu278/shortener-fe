@@ -13,8 +13,17 @@ export default function LinkItem({ link }: LinkItemProps) {
   const shortUrl = `${API_URL}/${link.shortCode}`;
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(shortUrl);
-    alert("Link copied!");
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(shortUrl).then(() => {
+        alert("Link copied!");
+      }).catch((err) => {
+        console.error("Copy Error:", err);
+        alert("Failed to copy link. Please copy manually.");
+      });
+    } else {
+      // Fallback nếu clipboard không hỗ trợ
+      alert("Clipboard API không được hỗ trợ. Vui lòng sao chép thủ công: " + shortUrl);
+    }
   };
 
   const handleShare = async () => {
