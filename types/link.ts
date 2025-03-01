@@ -5,6 +5,7 @@ export interface Link {
   originalUrl: string;
   shortCode: string;
   slug?: string;
+  qrCode?: string;
   expiresAt?: Date | null;
   createdAt?: Date;
 }

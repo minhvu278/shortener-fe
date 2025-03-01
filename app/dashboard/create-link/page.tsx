@@ -1,3 +1,4 @@
+// app/create-short-link/page.tsx
 "use client";
 
 import { useState } from "react";
@@ -18,8 +19,10 @@ import {
 } from "@mui/material";
 import { ContentCopy, Close } from "@mui/icons-material";
 import { api } from "@/utils/api";
+import { useRouter } from "next/navigation"; // Sửa import
 
 const CreateShortLink = () => {
+  const router = useRouter();
   const [originalUrl, setOriginalUrl] = useState("");
   const [slug, setSlug] = useState("");
   const [password, setPassword] = useState("");
@@ -34,29 +37,7 @@ const CreateShortLink = () => {
   const [openPopup, setOpenPopup] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
 
-  const validateForm = () => {
-    const errors: { [key: string]: string } = {};
-
-    if (!originalUrl.trim()) {
-      errors.originalUrl = "URL dài là bắt buộc.";
-    } else {
-      // Kiểm tra URL hợp lệ (tùy chọn)
-      try {
-        new URL(originalUrl);
-      } catch (err) {
-        errors.originalUrl = "URL không hợp lệ.";
-      }
-    }
-
-    setFieldErrors(errors);
-    return Object.keys(errors).length === 0; // Trả về true nếu không có lỗi
-  };
-
   const handleShorten = async () => {
-    if (!validateForm()) {
-      return;
-    }
-
     setLoading(true);
     setGeneralError(null);
     setFieldErrors({});
@@ -72,8 +53,9 @@ const CreateShortLink = () => {
       });
 
       setShortUrl(response.data.shortUrl);
-      setQrCode(response.data.qrCode);
+      setQrCode(response.data.qrCode || "");
       setOpenPopup(true);
+      setTimeout(() => router.push("/links"), 2000);
     } catch (err: any) {
       if (err.response && err.response.data) {
         const { message, errors } = err.response.data;
@@ -97,7 +79,7 @@ const CreateShortLink = () => {
         setCopySuccess(true);
       }).catch((err) => {
         console.error("Copy Error:", err);
-        alert("Failed to copy link. Please copy manually.");
+        alert("Không thể sao chép link. Vui lòng sao chép thủ công.");
       });
     } else {
       alert("Clipboard API không được hỗ trợ. Vui lòng sao chép thủ công: " + shortUrl);
@@ -118,7 +100,6 @@ const CreateShortLink = () => {
         error={!!fieldErrors.originalUrl}
         helperText={fieldErrors.originalUrl}
         sx={{ mb: 2 }}
-        required // Thêm required để hiển thị dấu * trên UI
       />
 
       <TextField

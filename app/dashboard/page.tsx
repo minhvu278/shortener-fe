@@ -3,6 +3,7 @@
 import { Box, Card, CardContent, Typography, Button } from "@mui/material";
 import InsertLinkIcon from "@mui/icons-material/InsertLink";
 import QrCodeIcon from "@mui/icons-material/QrCode";
+import Link from "next/link";
 
 export default function DashboardPage() {
   return (
@@ -13,9 +14,11 @@ export default function DashboardPage() {
             Make it short
           </Typography>
           <Typography variant="body2">Create a short and easy-to-share link.</Typography>
-          <Button variant="contained" sx={{ mt: 2 }} startIcon={<InsertLinkIcon />}>
-            Go to links
-          </Button>
+          <Link href="/dashboard/links">
+            <Button variant="contained" sx={{ mt: 2 }} startIcon={<InsertLinkIcon />}>
+              Go to links
+            </Button>
+          </Link>
         </CardContent>
       </Card>
 
@@ -25,9 +28,11 @@ export default function DashboardPage() {
             Make it scannable
           </Typography>
           <Typography variant="body2">Generate a QR Code for your link.</Typography>
-          <Button variant="contained" sx={{ mt: 2 }} startIcon={<QrCodeIcon />}>
-            Go to Codes
-          </Button>
+          <Link href="/dashboard/qr-codes">
+            <Button variant="contained" sx={{ mt: 2 }} startIcon={<QrCodeIcon />}>
+              Go to Codes
+            </Button>
+        </Link>
         </CardContent>
       </Card>
     </Box>
