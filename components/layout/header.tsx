@@ -1,56 +1,71 @@
 "use client";
 
-import { AppBar, Toolbar, Typography, Button, IconButton, Menu, MenuItem, Box } from "@mui/material";
-import PublicIcon from '@mui/icons-material/Public';
-import { useState } from "react";
-import theme from '@/lib/theme'
+import { AppBar, Toolbar, Typography, Button, IconButton, Box } from "@mui/material";
+import PublicIcon from "@mui/icons-material/Public";
+import { useState, useEffect } from "react";
+import theme from "@/lib/theme";
+import { useRouter } from "next/navigation";
 
 const Header = () => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const router = useRouter();
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token);
+  }, []);
 
-  const handleClose = () => {
-    setAnchorEl(null);
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setIsLoggedIn(false);
+    router.push("/");
   };
 
   return (
     <AppBar position="static" sx={{ boxShadow: "none", padding: "8px 24px" }}>
       <Toolbar sx={{ justifyContent: "space-between" }}>
-        {/* Logo */}
-        <Typography variant="h6" sx={{ fontWeight: "bold", color: "#FF6D00", cursor: "pointer" }}>
+        <Typography
+          variant="h6"
+          sx={{ fontWeight: "bold", color: "#FF6D00", cursor: "pointer" }}
+          onClick={() => router.push("/")}
+        >
           Better bytes
         </Typography>
 
-        {/* Navigation */}
-        <Box sx={{ display: { xs: "none", md: "flex" }, gap: 3 }}>
+        {/* <Box sx={{ display: { xs: "none", md: "flex" }, gap: 3 }}>
           <Button sx={{ color: "white", textTransform: "none" }}>Nền tảng</Button>
           <Button sx={{ color: "white", textTransform: "none" }}>Giải pháp</Button>
           <Button sx={{ color: "white", textTransform: "none" }}>Giá</Button>
           <Button sx={{ color: "white", textTransform: "none" }}>Tài nguyên</Button>
-        </Box>
+        </Box> */}
 
-        {/* Right Actions */}
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-          {/* Language Switcher */}
-          <IconButton color="inherit" onClick={handleClick}>
+          {/* <IconButton color="inherit">
             <PublicIcon />
-          </IconButton>
-          {/*<Menu anchorEl={anchorEl} open={open} onClose={handleClose}>*/}
-          {/*  <MenuItem onClick={handleClose}>English</MenuItem>*/}
-          {/*  <MenuItem onClick={handleClose}>Vietnamese</MenuItem>*/}
-          {/*</Menu>*/}
+          </IconButton> */}
 
-          <Button sx={{ color: "white", textTransform: "none" }}>Đăng nhập</Button>
-          <Button variant="outlined" sx={{ borderColor: "white", color: "white", textTransform: "none" }}>
-            Nhận báo giá
-          </Button>
-          <Button variant="contained" sx={{ backgroundColor: "white", textTransform: "none", color: theme.palette.primary.main }}>
-            Đăng ký miễn phí
-          </Button>
+          {isLoggedIn ? (
+            <Button sx={{ color: "white", textTransform: "none" }} onClick={handleLogout}>
+              Đăng xuất
+            </Button>
+          ) : (
+            <>
+              <Button sx={{ color: "white", textTransform: "none" }} onClick={() => router.push("/login")}>
+                Đăng nhập
+              </Button>
+              <Button
+                variant="contained"
+                sx={{
+                  backgroundColor: "white",
+                  textTransform: "none",
+                  color: theme.palette.primary.main,
+                }}
+                onClick={() => router.push("/register")}
+              >
+                Đăng ký miễn phí
+              </Button>
+            </>
+          )}
         </Box>
       </Toolbar>
     </AppBar>

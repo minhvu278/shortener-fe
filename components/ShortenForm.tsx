@@ -1,46 +1,61 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from "react";
 import {
   TextField,
   Button,
   Typography,
   Box,
   CircularProgress,
-  ToggleButton,
   ToggleButtonGroup,
-  Paper
-} from '@mui/material';
-import { api } from '@/utils/api';
-import theme from '@/lib/theme';
-import InsertLinkIcon from '@mui/icons-material/InsertLink';
-import QrCodeIcon from '@mui/icons-material/QrCode';
-import StatsSection from '@/components/home/stats-section';
+  Paper,
+  Modal,
+} from "@mui/material";
+import axios from "axios";
+import theme from "@/lib/theme";
+import InsertLinkIcon from "@mui/icons-material/InsertLink";
+import QrCodeIcon from "@mui/icons-material/QrCode";
+import StatsSection from "@/components/home/stats-section";
+import { useRouter } from "next/navigation";
 
 const ShortenForm = () => {
-  const [originalUrl, setOriginalUrl] = useState('');
-  const [shortCode, setShortCode] = useState('');
-  const [qrCode, setQrCode] = useState('');
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState('');
+  const [originalUrl, setOriginalUrl] = useState("");
+  const [shortCode, setShortCode] = useState("");
+  const [qrCode, setQrCode] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token);
+  }, []);
 
   const handleShorten = async () => {
     if (!originalUrl) {
-      setError('Vui lòng nhập URL hợp lệ');
+      setError("Vui lòng nhập URL hợp lệ");
+      return;
+    }
+
+    if (!isLoggedIn) {
+      setOpenModal(true);
       return;
     }
 
     setLoading(true);
-    setError('');
+    setError("");
     try {
-      const response = await api.post('/links', { originalUrl });
-      console.log(response);
-      
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/dashboard/links`,
+        { originalUrl },
+        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+      );
       setShortCode(response.data.shortUrl);
       setQrCode(response.data.qrCode);
     } catch (error) {
-      console.error('Lỗi:', error);
-      setError('Không thể rút gọn URL. Vui lòng thử lại.');
+      setError("Không thể rút gọn URL. Vui lòng thử lại.");
     } finally {
       setLoading(false);
     }
@@ -55,8 +70,7 @@ const ShortenForm = () => {
           Xây dựng kết nối kỹ thuật số mạnh mẽ hơn
         </Typography>
         <Typography variant="body1" sx={{ mt: 1, mb: 3, maxWidth: "620px", mx: "auto" }}>
-          Sử dụng trình rút gọn URL, Mã QR và link đích của chúng tôi để thu hút khách hàng và kết nối họ với thông tin phù hợp.
-          Xây dựng, chỉnh sửa và theo dõi mọi thứ.
+          Sử dụng trình rút gọn URL, Mã QR và link đích của chúng tôi để thu hút khách hàng.
         </Typography>
 
         <ToggleButtonGroup
@@ -75,24 +89,10 @@ const ShortenForm = () => {
           </Button>
         </ToggleButtonGroup>
 
-        <Paper
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            maxWidth: "500px",
-            mx: "auto",
-            p: 3,
-            borderRadius: "16px",
-          }}
-        >
+        <Paper sx={{ maxWidth: "500px", mx: "auto", p: 3, borderRadius: "16px" }}>
           <Typography variant="h5" fontWeight="bold">
             Rút ngắn một liên kết dài
           </Typography>
-          <Typography variant="body2" sx={{ mb: 2 }}>
-            Không cần thẻ tín dụng.
-          </Typography>
-
           <TextField
             value={originalUrl}
             onChange={(e) => setOriginalUrl(e.target.value)}
@@ -101,8 +101,13 @@ const ShortenForm = () => {
             variant="outlined"
             sx={{ mb: 2, bgcolor: "white", borderRadius: "8px" }}
           />
-          <Button variant="contained" sx={{ px: 4, borderRadius: "8px" }} onClick={handleShorten} disabled={loading}>
-            {loading ? <CircularProgress size={24} /> : 'Nhận liên kết của bạn miễn phí →'}
+          <Button
+            variant="contained"
+            sx={{ px: 4, borderRadius: "8px" }}
+            onClick={handleShorten}
+            disabled={loading}
+          >
+            {loading ? <CircularProgress size={24} /> : "Nhận liên kết của bạn miễn phí →"}
           </Button>
 
           {error && (
@@ -114,28 +119,45 @@ const ShortenForm = () => {
           {shortCode && (
             <Box mt={3} textAlign="center">
               <Typography variant="h6">
-                URL rút gọn: <a href={shortCode} target="_blank" rel="noopener noreferrer">{shortCode}</a>
+                URL rút gọn: <a href={shortCode}>{shortCode}</a>
               </Typography>
-
-              {qrCode && (
-                <Box mt={2}>
-                  <Typography variant="body1">📲 Quét QR để truy cập:</Typography>
-                  <img src={qrCode} alt="QR Code" width="180" height="180" />
-                </Box>
-              )}
+              {qrCode && <img src={qrCode} alt="QR Code" width="180" height="180" />}
             </Box>
           )}
         </Paper>
-
-        <Typography variant="body2" sx={{ mt: 4 }}>
-          Đăng ký miễn phí. Gói miễn phí của bạn bao gồm:
-        </Typography>
-        <Typography variant="body2" sx={{ fontSize: "14px", mt: 1 }}>
-          🔗 5 link ngắn/tháng &nbsp;&nbsp; | &nbsp;&nbsp; 🎨 Chỉnh thời gian hết hạn link &nbsp;&nbsp; | &nbsp;&nbsp; 📊 Nhấp vào liên kết không giới hạn
-        </Typography>
       </Box>
 
       <StatsSection />
+
+      {/* Modal yêu cầu đăng nhập */}
+      <Modal open={openModal} onClose={() => setOpenModal(false)}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            bgcolor: "white",
+            p: 4,
+            borderRadius: "16px",
+            textAlign: "center",
+          }}
+        >
+          <Typography variant="h6" sx={{ mb: 2 }}>
+            Vui lòng đăng nhập hoặc đăng ký để tạo link
+          </Typography>
+          <Button
+            variant="contained"
+            sx={{ mr: 2 }}
+            onClick={() => router.push("/login")}
+          >
+            Đăng nhập
+          </Button>
+          <Button variant="outlined" onClick={() => router.push("/register")}>
+            Đăng ký
+          </Button>
+        </Box>
+      </Modal>
     </>
   );
 };

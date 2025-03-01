@@ -77,7 +77,7 @@ export default function CreateQrCodePage() {
   return (
     <Box sx={{ p: 3 }}>
       <Typography variant="h5" fontWeight="bold" gutterBottom>
-        Create a Bitly Code
+        Create a Code
       </Typography>
       <Typography variant="body2" color="text.secondary" mb={3}>
         You can create 1 more codes this month.{" "}
