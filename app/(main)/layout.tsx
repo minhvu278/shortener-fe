@@ -5,7 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "@/lib/theme";
 import Header from "@/components/layout/header";
-import Footer from "@/components/layout/Footer";
+import Footer from "@/components/layout/footer";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
