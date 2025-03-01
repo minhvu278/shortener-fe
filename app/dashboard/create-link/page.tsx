@@ -55,7 +55,6 @@ const CreateShortLink = () => {
       setShortUrl(response.data.shortUrl);
       setQrCode(response.data.qrCode || "");
       setOpenPopup(true);
-      setTimeout(() => router.push("/links"), 2000);
     } catch (err: any) {
       if (err.response && err.response.data) {
         const { message, errors } = err.response.data;
@@ -181,7 +180,13 @@ const CreateShortLink = () => {
           </Box>
 
           {generateQrCode && qrCode && (
-            <Box mt={3} textAlign="center">
+            <Box mt={3} sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 3,
+              alignItems: "center",
+              justifyContent: "center"
+            }}>
               <Typography variant="body1" sx={{ fontWeight: "bold", color: "#444" }}>
                 📲 Quét QR để truy cập:
               </Typography>
