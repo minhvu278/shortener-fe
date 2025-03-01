@@ -1,30 +1,36 @@
 "use client";
-import { Box, CssBaseline } from '@mui/material'
-import Header from '@/components/layout/header'
-import Footer from '@/components/layout/footer'
-import React from 'react'
 
-export default function MainLayout({children}: {
-  children: React.ReactNode;
-}) {
+import { useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import { ThemeProvider } from "@mui/material/styles";
+import theme from "@/lib/theme";
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const publicPaths = ["/login", "/register"];
+
+    if (token && publicPaths.includes(pathname)) {
+      router.push("/dashboard"); // Chuyển hướng nếu đã đăng nhập mà vào /login hoặc /register
+    } else if (!token && pathname === "/dashboard") {
+      router.push("/login"); // Chuyển về /login nếu chưa đăng nhập mà vào /dashboard
+    }
+  }, [pathname, router]);
+
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        minHeight: "100vh",
-      }}
-    >
-      <CssBaseline />
-      <Box>
-        <Header />
-      </Box>
-      <Box flex={1} component="main">
-        {children}
-      </Box>
-      <Box>
-        <Footer/>
-      </Box>
-    </Box>
+    <html lang="en">
+      <body>
+        <ThemeProvider theme={theme}>
+          <Header />
+          {children}
+          <Footer />
+        </ThemeProvider>
+      </body>
+    </html>
   );
 }
