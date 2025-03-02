@@ -1,17 +1,17 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   TextField,
   Button,
   Typography,
   Box,
   CircularProgress,
-  ToggleButtonGroup,
+  Tabs,
+  Tab,
   Paper,
   Modal,
 } from "@mui/material";
-import axios from "axios";
 import theme from "@/lib/theme";
 import InsertLinkIcon from "@mui/icons-material/InsertLink";
 import QrCodeIcon from "@mui/icons-material/QrCode";
@@ -20,18 +20,11 @@ import { useRouter } from "next/navigation";
 
 const ShortenForm = () => {
   const [originalUrl, setOriginalUrl] = useState("");
-  const [shortCode, setShortCode] = useState("");
-  const [qrCode, setQrCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [openModal, setOpenModal] = useState(false);
+  const [selectedTab, setSelectedTab] = useState(0);
   const router = useRouter();
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    setIsLoggedIn(!!token);
-  }, []);
 
   const handleShorten = async () => {
     if (!originalUrl) {
@@ -39,29 +32,12 @@ const ShortenForm = () => {
       return;
     }
 
-    if (!isLoggedIn) {
-      setOpenModal(true);
-      return;
-    }
-
-    setLoading(true);
-    setError("");
-    try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/dashboard/links`,
-        { originalUrl },
-        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
-      );
-      setShortCode(response.data.shortUrl);
-      setQrCode(response.data.qrCode);
-    } catch (error) {
-      setError("Không thể rút gọn URL. Vui lòng thử lại.");
-    } finally {
-      setLoading(false);
-    }
+    setOpenModal(true);
   };
 
-  const [selectedOption, setSelectedOption] = useState("short-link");
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setSelectedTab(newValue);
+  };
 
   return (
     <>
@@ -73,21 +49,40 @@ const ShortenForm = () => {
           Sử dụng trình rút gọn URL, Mã QR và link đích của chúng tôi để thu hút khách hàng.
         </Typography>
 
-        <ToggleButtonGroup
-          value={selectedOption}
-          exclusive
-          onChange={(event, newValue) => newValue && setSelectedOption(newValue)}
-          sx={{ mb: 3 }}
+        <Tabs
+          value={selectedTab}
+          onChange={handleTabChange}
+          centered
+          sx={{
+            mb: 3,
+            "& .MuiTab-root": {
+              color: "white",
+              fontWeight: "bold",
+              textTransform: "none",
+              "&.Mui-selected": {
+                color: theme.palette.primary.dark,
+                bgcolor: "white",
+                borderRadius: "8px 8px 0 0",
+              },
+            },
+            "& .MuiTabs-indicator": {
+              display: "none",
+            },
+          }}
         >
-          <Button value="short-link" sx={{ px: 3, color: theme.palette.primary.main, backgroundColor: theme.palette.secondary.main }}>
-            <InsertLinkIcon sx={{ mr: 1 }} />
-            Link ngắn
-          </Button>
-          <Button value="qr-code" sx={{ px: 3, color: theme.palette.secondary.main }}>
-            <QrCodeIcon sx={{ mr: 1 }} />
-            QR Code
-          </Button>
-        </ToggleButtonGroup>
+          <Tab
+            icon={<InsertLinkIcon />}
+            iconPosition="start"
+            label="Link ngắn"
+            sx={{ px: 3 }}
+          />
+          <Tab
+            icon={<QrCodeIcon />}
+            iconPosition="start"
+            label="QR Code"
+            sx={{ px: 3 }}
+          />
+        </Tabs>
 
         <Paper sx={{ maxWidth: "500px", mx: "auto", p: 3, borderRadius: "16px" }}>
           <Typography variant="h5" fontWeight="bold">
@@ -103,7 +98,7 @@ const ShortenForm = () => {
           />
           <Button
             variant="contained"
-            sx={{ px: 4, borderRadius: "8px" }}
+            sx={{ px: 4, borderRadius: "8px", bgcolor: theme.palette.primary.main }}
             onClick={handleShorten}
             disabled={loading}
           >
@@ -115,21 +110,11 @@ const ShortenForm = () => {
               {error}
             </Typography>
           )}
-
-          {shortCode && (
-            <Box mt={3} textAlign="center">
-              <Typography variant="h6">
-                URL rút gọn: <a href={shortCode}>{shortCode}</a>
-              </Typography>
-              {qrCode && <img src={qrCode} alt="QR Code" width="180" height="180" />}
-            </Box>
-          )}
         </Paper>
       </Box>
 
       <StatsSection />
 
-      {/* Modal yêu cầu đăng nhập */}
       <Modal open={openModal} onClose={() => setOpenModal(false)}>
         <Box
           sx={{
@@ -146,11 +131,7 @@ const ShortenForm = () => {
           <Typography variant="h6" sx={{ mb: 2 }}>
             Vui lòng đăng nhập hoặc đăng ký để tạo link
           </Typography>
-          <Button
-            variant="contained"
-            sx={{ mr: 2 }}
-            onClick={() => router.push("/login")}
-          >
+          <Button variant="contained" sx={{ mr: 2 }} onClick={() => router.push("/login")}>
             Đăng nhập
           </Button>
           <Button variant="outlined" onClick={() => router.push("/register")}>

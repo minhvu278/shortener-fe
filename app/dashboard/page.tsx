@@ -15,6 +15,7 @@ import QrCodeIcon from "@mui/icons-material/QrCode";
 import axios from "axios";
 import theme from "@/lib/theme";
 import Link from "next/link";
+import { getCookie } from "@/lib/cookie";
 
 const DashboardPage = () => {
   const [user, setUser] = useState<any>(null);
@@ -22,20 +23,14 @@ const DashboardPage = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      router.push("/login");
-      return;
-    }
-
     const fetchUser = async () => {
       try {
+        const token = getCookie("token");
         const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUser(response.data);
       } catch (error) {
-        localStorage.removeItem("token");
         router.push("/login");
       } finally {
         setLoading(false);
@@ -57,9 +52,9 @@ const DashboardPage = () => {
     <Box
       sx={{
         p: 4,
-        bgcolor: "#ffffff", // Nền trắng
+        bgcolor: "#ffffff",
         minHeight: "100vh",
-        color: "black", // Chữ đen để dễ đọc trên nền trắng
+        color: "black",
       }}
     >
       <Typography variant="h4" fontWeight="bold" sx={{ mb: 4 }}>

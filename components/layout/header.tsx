@@ -32,13 +32,6 @@ const Header = () => {
           Better bytes
         </Typography>
 
-        {/* <Box sx={{ display: { xs: "none", md: "flex" }, gap: 3 }}>
-          <Button sx={{ color: "white", textTransform: "none" }}>Nền tảng</Button>
-          <Button sx={{ color: "white", textTransform: "none" }}>Giải pháp</Button>
-          <Button sx={{ color: "white", textTransform: "none" }}>Giá</Button>
-          <Button sx={{ color: "white", textTransform: "none" }}>Tài nguyên</Button>
-        </Box> */}
-
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
           {/* <IconButton color="inherit">
             <PublicIcon />

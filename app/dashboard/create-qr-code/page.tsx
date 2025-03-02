@@ -1,4 +1,3 @@
-// app/create-qr-code/page.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -6,8 +5,8 @@ import {
   Box,
   Typography,
   TextField,
-  // FormControlLabel,
-  // Switch,
+  FormControlLabel,
+  Switch,
   Paper,
   Button,
   Tabs,
@@ -45,13 +44,12 @@ export default function CreateQrCodePage() {
     setFieldErrors({});
 
     try {
-      const response = await api.post("/qr-codes", {
+      await api.post("/qr-codes", {
         originalUrl,
         title: title || undefined,
         createShortLink,
       });
 
-      setPreviewQrCode(response.data.qrCode);
       router.push("/dashboard/qr-codes");
     } catch (err: any) {
       if (err.response && err.response.data) {
@@ -75,7 +73,7 @@ export default function CreateQrCodePage() {
   };
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ p: 3, bgcolor: "#ffffff", minHeight: "100vh", color: "black" }}>
       <Typography variant="h5" fontWeight="bold" gutterBottom>
         Create a Code
       </Typography>
@@ -93,7 +91,7 @@ export default function CreateQrCodePage() {
 
       <Box sx={{ display: "flex", gap: 3 }}>
         <Box sx={{ flex: 1 }}>
-          <Paper sx={{ p: 3, mb: 3 }}>
+          <Paper sx={{ p: 3, mb: 3, borderRadius: "16px" }}>
             <Typography variant="h6" fontWeight="bold" gutterBottom>
               Destination
             </Typography>
@@ -120,34 +118,8 @@ export default function CreateQrCodePage() {
             />
           </Paper>
 
-          {/* <Paper sx={{ p: 3 }}>
-            <Typography variant="h6" fontWeight="bold" gutterBottom>
-              Ways to share
-            </Typography>
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={createShortLink}
-                  onChange={(e) => setCreateShortLink(e.target.checked)}
-                />
-              }
-              label={
-                <Box>
-                  <Typography variant="body1">Short link</Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Create a link that directs users to the same destination as your QR Code
-                    <br />
-                    <Typography component="span" color="text.secondary" fontSize="0.8rem">
-                      3 left
-                    </Typography>
-                  </Typography>
-                </Box>
-              }
-            />
-          </Paper> */}
-
           {generalError && (
-            <Typography color="error" sx={{ mt: 2, textAlign: "center", fontWeight:"bold" }}>
+            <Typography color="error" sx={{ mt: 2, textAlign: "center", fontWeight: "bold" }}>
               {generalError}
             </Typography>
           )}

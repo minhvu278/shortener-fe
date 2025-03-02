@@ -20,7 +20,9 @@ const LoginPage = () => {
     try {
       const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, { email, password });
       const { access_token } = response.data;
-      localStorage.setItem("token", access_token);
+
+      document.cookie = `token=${access_token}; path=/; max-age=3600`;
+
       router.push("/dashboard");
     } catch (err: any) {
       setError(err.response?.data?.message || "Đăng nhập thất bại");

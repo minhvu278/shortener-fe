@@ -25,7 +25,10 @@ const RegisterPage = () => {
         password,
       });
       const { access_token } = response.data;
-      localStorage.setItem("token", access_token);
+
+      // Lưu token vào cookies
+      document.cookie = `token=${access_token}; path=/; max-age=3600`;
+
       router.push("/dashboard");
     } catch (err: any) {
       setError(err.response?.data?.message || "Đăng ký thất bại");
