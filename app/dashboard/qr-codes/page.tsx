@@ -1,4 +1,3 @@
-// pages/qr-codes.tsx
 "use client";
 
 import { useState, useEffect } from "react";

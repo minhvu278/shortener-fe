@@ -1,4 +1,3 @@
-// app/create-short-link/page.tsx
 "use client";
 
 import { useState } from "react";
@@ -19,7 +18,7 @@ import {
 } from "@mui/material";
 import { ContentCopy, Close } from "@mui/icons-material";
 import { api } from "@/utils/api";
-import { useRouter } from "next/navigation"; // Sửa import
+import { useRouter } from "next/navigation";
 
 const CreateShortLink = () => {
   const router = useRouter();
@@ -86,78 +85,90 @@ const CreateShortLink = () => {
   };
 
   return (
-    <Paper sx={{ p: 4, maxWidth: 600, mx: "auto", mt: 4 }}>
-      <Typography variant="h5" fontWeight="bold" gutterBottom>
-        Tạo mới link rút gọn
-      </Typography>
-
-      <TextField
-        label="URL dài"
-        fullWidth
-        value={originalUrl}
-        onChange={(e) => setOriginalUrl(e.target.value)}
-        error={!!fieldErrors.originalUrl}
-        helperText={fieldErrors.originalUrl}
-        sx={{ mb: 2 }}
-      />
-
-      <TextField
-        label="Tiêu đề (Tùy chọn)"
-        fullWidth
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        error={!!fieldErrors.title}
-        helperText={fieldErrors.title}
-        sx={{ mb: 2 }}
-      />
-
-      <TextField
-        label="Slug (Tùy chọn)"
-        fullWidth
-        value={slug}
-        onChange={(e) => setSlug(e.target.value)}
-        error={!!fieldErrors.slug}
-        helperText={fieldErrors.slug}
-        sx={{ mb: 2 }}
-      />
-
-      <TextField
-        label="Mật khẩu bảo vệ (Tùy chọn)"
-        type="password"
-        fullWidth
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        error={!!fieldErrors.password}
-        helperText={fieldErrors.password}
-        sx={{ mb: 2 }}
-      />
-
-      <TextField
-        label="Ngày hết hạn (Tùy chọn)"
-        type="datetime-local"
-        fullWidth
-        value={expiresAt}
-        onChange={(e) => setExpiresAt(e.target.value)}
-        error={!!fieldErrors.expiresAt}
-        helperText={fieldErrors.expiresAt}
-        InputLabelProps={{ shrink: true }}
-        sx={{ mb: 2 }}
-      />
-
-      <FormControlLabel
-        control={<Switch checked={generateQrCode} onChange={(e) => setGenerateQrCode(e.target.checked)} />}
-        label="Tạo QR code"
-      />
-
-      <Button variant="contained" color="primary" fullWidth onClick={handleShorten} disabled={loading} sx={{ mt: 2 }}>
-        {loading ? "Đang tạo..." : "Tạo link"}
-      </Button>
-
-      {generalError && (
-        <Typography color="error" sx={{ mt: 2, textAlign: "center", fontWeight: "bold" }}>
-          {generalError}
+    <Box sx={{ p: 3, bgcolor: "#ffffff", minHeight: "100vh", color: "black" }}>
+      <Paper sx={{ p: 4, maxWidth: 600, mx: "auto", mt: 4, borderRadius: "16px" }}>
+        <Typography variant="h5" fontWeight="bold" gutterBottom>
+          Tạo mới link rút gọn
         </Typography>
-      )}
+
+        <TextField
+          label="URL dài"
+          fullWidth
+          value={originalUrl}
+          onChange={(e) => setOriginalUrl(e.target.value)}
+          error={!!fieldErrors.originalUrl}
+          helperText={fieldErrors.originalUrl}
+          sx={{ mb: 2 }}
+        />
+
+        <TextField
+          label="Tiêu đề (Tùy chọn)"
+          fullWidth
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          error={!!fieldErrors.title}
+          helperText={fieldErrors.title}
+          sx={{ mb: 2 }}
+        />
+
+        <TextField
+          label="Slug (Tùy chọn)"
+          fullWidth
+          value={slug}
+          onChange={(e) => setSlug(e.target.value)}
+          error={!!fieldErrors.slug}
+          helperText={fieldErrors.slug}
+          sx={{ mb: 2 }}
+        />
+
+        <TextField
+          label="Mật khẩu bảo vệ (Tùy chọn)"
+          type="password"
+          fullWidth
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          error={!!fieldErrors.password}
+          helperText={fieldErrors.password}
+          sx={{ mb: 2 }}
+        />
+
+        <TextField
+          label="Ngày hết hạn (Tùy chọn)"
+          type="datetime-local"
+          fullWidth
+          value={expiresAt}
+          onChange={(e) => setExpiresAt(e.target.value)}
+          error={!!fieldErrors.expiresAt}
+          helperText={fieldErrors.expiresAt}
+          InputLabelProps={{ shrink: true }}
+          sx={{ mb: 2 }}
+        />
+
+        <FormControlLabel
+          control={<Switch checked={generateQrCode} onChange={(e) => setGenerateQrCode(e.target.checked)} />}
+          label="Tạo QR code"
+        />
+
+        <Box sx={{ display: "flex", justifyContent: "space-between", mt: 3 }}>
+          <Button variant="outlined" onClick={() => router.push("/dashboard/links")}>
+            Hủy
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleShorten}
+            disabled={loading}
+          >
+            {loading ? "Đang tạo..." : "Tạo link"}
+          </Button>
+        </Box>
+
+        {generalError && (
+          <Typography color="error" sx={{ mt: 2, textAlign: "center", fontWeight: "bold" }}>
+            {generalError}
+          </Typography>
+        )}
+      </Paper>
 
       <Dialog open={openPopup} onClose={() => setOpenPopup(false)} sx={{ "& .MuiDialog-paper": { borderRadius: 4, maxWidth: "500px", p: 2 } }}>
         <DialogTitle sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 20, fontWeight: "bold", color: "#333" }}>
@@ -199,7 +210,7 @@ const CreateShortLink = () => {
       <Snackbar open={copySuccess} autoHideDuration={2000} onClose={() => setCopySuccess(false)}>
         <Alert severity="success">Đã sao chép link!</Alert>
       </Snackbar>
-    </Paper>
+    </Box>
   );
 };
 

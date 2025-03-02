@@ -21,7 +21,6 @@ const LoginPage = () => {
       const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, { email, password });
       const { access_token } = response.data;
 
-      // Lưu token vào cookies
       document.cookie = `token=${access_token}; path=/; max-age=3600`;
 
       router.push("/dashboard");

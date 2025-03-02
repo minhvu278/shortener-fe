@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 // Các route công khai (không cần đăng nhập)
-const publicRoutes = ["/login", "/register"];
+const publicRoutes = ["/login", "/register", "/password/:path*"];
 // Các route bảo vệ (cần đăng nhập)
 const protectedRoutes = ["/dashboard", "/dashboard/links", "/dashboard/qr-codes"];
 
@@ -13,8 +13,11 @@ export function middleware(request: NextRequest) {
 
   // Trường hợp 1: Đã đăng nhập
   if (token) {
-    // Nếu truy cập vào bất kỳ route nào ngoài protected routes, chuyển hướng về /dashboard
-    if (!protectedRoutes.some((route) => pathname.startsWith(route))) {
+    // Nếu truy cập vào bất kỳ route nào ngoài protected routes và /password, chuyển hướng về /dashboard
+    if (
+      !protectedRoutes.some((route) => pathname.startsWith(route)) &&
+      !pathname.startsWith("/password")
+    ) {
       return NextResponse.redirect(new URL("/dashboard", request.url));
     }
   }
