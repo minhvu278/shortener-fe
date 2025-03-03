@@ -72,6 +72,10 @@ export default function CreateQrCodePage() {
     setTabValue(newValue);
   };
 
+  const handleUpgrade = () => {
+    router.push("/upgrade");
+  };
+
   return (
     <Box sx={{ p: 3, bgcolor: "#ffffff", minHeight: "100vh", color: "black" }}>
       <Typography variant="h5" fontWeight="bold" gutterBottom>
@@ -118,10 +122,47 @@ export default function CreateQrCodePage() {
             />
           </Paper>
 
-          {generalError && (
-            <Typography color="error" sx={{ mt: 2, textAlign: "center", fontWeight: "bold" }}>
-              {generalError}
+          <Paper sx={{ p: 3, borderRadius: "16px" }}>
+            <Typography variant="h6" fontWeight="bold" gutterBottom>
+              Ways to share
             </Typography>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={createShortLink}
+                  onChange={(e) => setCreateShortLink(e.target.checked)}
+                />
+              }
+              label={
+                <Box>
+                  <Typography variant="body1">Short link</Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Create a link that directs users to the same destination as your QR Code
+                    <br />
+                    <Typography component="span" color="text.secondary" fontSize="0.8rem">
+                      3 left
+                    </Typography>
+                  </Typography>
+                </Box>
+              }
+            />
+          </Paper>
+
+          {generalError && (
+            <Box sx={{ mt: 2, textAlign: "center" }}>
+              <Typography color="error" sx={{ mb: 1, fontWeight: "bold" }}>
+                {generalError}
+              </Typography>
+              {generalError.includes("giới hạn 5 link") && (
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  onClick={handleUpgrade}
+                >
+                  Nâng cấp lên gói Pro
+                </Button>
+              )}
+            </Box>
           )}
         </Box>
 

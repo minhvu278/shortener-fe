@@ -84,6 +84,10 @@ const CreateShortLink = () => {
     }
   };
 
+  const handleUpgrade = () => {
+    router.push("/upgrade");
+  };
+
   return (
     <Box sx={{ p: 3, bgcolor: "#ffffff", minHeight: "100vh", color: "black" }}>
       <Paper sx={{ p: 4, maxWidth: 600, mx: "auto", mt: 4, borderRadius: "16px" }}>
@@ -164,9 +168,20 @@ const CreateShortLink = () => {
         </Box>
 
         {generalError && (
-          <Typography color="error" sx={{ mt: 2, textAlign: "center", fontWeight: "bold" }}>
-            {generalError}
-          </Typography>
+          <Box sx={{ mt: 2, textAlign: "center" }}>
+            <Typography color="error" sx={{ mb: 1, fontWeight: "bold" }}>
+              {generalError}
+            </Typography>
+            {generalError.includes("giới hạn 5 link") && (
+              <Button
+                variant="outlined"
+                color="primary"
+                onClick={handleUpgrade}
+              >
+                Nâng cấp lên gói Pro
+              </Button>
+            )}
+          </Box>
         )}
       </Paper>
 
