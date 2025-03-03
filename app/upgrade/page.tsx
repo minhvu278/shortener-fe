@@ -15,7 +15,7 @@ export default function UpgradePage() {
     setError(null);
 
     try {
-      await api.post("/users/upgrade-to-pro");
+      // await api.post("/users/upgrade-to-pro");
       router.push("/dashboard");
     } catch (err: any) {
       setError(err.response?.data?.message || "Không thể nâng cấp gói. Vui lòng thử lại.");

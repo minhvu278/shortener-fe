@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 // Các route công khai (không cần đăng nhập)
 const publicRoutes = ["/login", "/register", "/password/:path*"];
 // Các route bảo vệ (cần đăng nhập)
-const protectedRoutes = ["/dashboard", "/dashboard/links", "/dashboard/qr-codes"];
+const protectedRoutes = ["/dashboard", "/dashboard/links", "/dashboard/qr-codes", "/upgrade"];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
