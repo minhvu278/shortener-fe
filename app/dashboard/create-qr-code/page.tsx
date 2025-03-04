@@ -162,32 +162,6 @@ export default function CreateQrCodePage() {
             />
           </Paper>
 
-          <Paper sx={{ p: 3, borderRadius: "16px" }}>
-            <Typography variant="h6" fontWeight="bold" gutterBottom>
-              Ways to share
-            </Typography>
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={createShortLink}
-                  onChange={(e) => setCreateShortLink(e.target.checked)}
-                />
-              }
-              label={
-                <Box>
-                  <Typography variant="body1">Short link</Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Create a link that directs users to the same destination as your QR Code
-                    <br />
-                    <Typography component="span" color="text.secondary" fontSize="0.8rem">
-                      {remainingLinks !== null ? `${remainingLinks} left` : "Không giới hạn"}
-                    </Typography>
-                  </Typography>
-                </Box>
-              }
-            />
-          </Paper>
-
           {generalError && (
             <Box sx={{ mt: 2, textAlign: "center" }}>
               <Typography color="error" sx={{ mb: 1, fontWeight: "bold" }}>
