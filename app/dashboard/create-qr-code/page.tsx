@@ -253,7 +253,7 @@ export default function CreateQrCodePage() {
 
       <Dialog open={openLimitPopup} onClose={() => setOpenLimitPopup(false)} sx={{ "& .MuiDialog-paper": { borderRadius: "16px", maxWidth: "500px", p: 0 } }}>
         <DialogTitle sx={{ bgcolor: theme.palette.primary.main, color: "white", display: "flex", justifyContent: "space-between", alignItems: "center", borderTopLeftRadius: "16px", borderTopRightRadius: "16px" }}>
-          <Typography variant="h6" fontWeight="bold">
+          <Typography fontWeight="bold">
             Đạt giới hạn link
           </Typography>
           <IconButton onClick={() => setOpenLimitPopup(false)} sx={{ color: "white" }}>
