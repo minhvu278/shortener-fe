@@ -39,7 +39,7 @@ export default function CreateQrCodePage() {
   const [openLimitPopup, setOpenLimitPopup] = useState(false);
   const [remainingLinks, setRemainingLinks] = useState<number | null>(null);
 
-  const defaultQrCodeUrl = "http://103.221.221.110:5000";
+  const defaultQrCodeUrl = "https://betterbytesvn.cloud";
 
   useEffect(() => {
     const fetchRemainingLinks = async () => {
@@ -73,7 +73,7 @@ export default function CreateQrCodePage() {
     setFieldErrors({});
 
     try {
-      await api.post("/qr-codes", {
+      await api.post("/api/qr-codes", {
         originalUrl,
         title: title || undefined,
         createShortLink,
@@ -162,32 +162,6 @@ export default function CreateQrCodePage() {
             />
           </Paper>
 
-          <Paper sx={{ p: 3, borderRadius: "16px" }}>
-            <Typography variant="h6" fontWeight="bold" gutterBottom>
-              Ways to share
-            </Typography>
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={createShortLink}
-                  onChange={(e) => setCreateShortLink(e.target.checked)}
-                />
-              }
-              label={
-                <Box>
-                  <Typography variant="body1">Short link</Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Create a link that directs users to the same destination as your QR Code
-                    <br />
-                    <Typography component="span" color="text.secondary" fontSize="0.8rem">
-                      {remainingLinks !== null ? `${remainingLinks} left` : "Không giới hạn"}
-                    </Typography>
-                  </Typography>
-                </Box>
-              }
-            />
-          </Paper>
-
           {generalError && (
             <Box sx={{ mt: 2, textAlign: "center" }}>
               <Typography color="error" sx={{ mb: 1, fontWeight: "bold" }}>
@@ -253,7 +227,7 @@ export default function CreateQrCodePage() {
 
       <Dialog open={openLimitPopup} onClose={() => setOpenLimitPopup(false)} sx={{ "& .MuiDialog-paper": { borderRadius: "16px", maxWidth: "500px", p: 0 } }}>
         <DialogTitle sx={{ bgcolor: theme.palette.primary.main, color: "white", display: "flex", justifyContent: "space-between", alignItems: "center", borderTopLeftRadius: "16px", borderTopRightRadius: "16px" }}>
-          <Typography variant="h6" fontWeight="bold">
+          <Typography fontWeight="bold">
             Đạt giới hạn link
           </Typography>
           <IconButton onClick={() => setOpenLimitPopup(false)} sx={{ color: "white" }}>

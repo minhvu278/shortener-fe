@@ -41,23 +41,43 @@ const CreateShortLink = () => {
   const [openLimitPopup, setOpenLimitPopup] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
   const [remainingLinks, setRemainingLinks] = useState<number | null>(null);
+  const [isPro, setIsPro] = useState<boolean>(false);
+
+  const fetchRemainingLinks = async () => {
+    const token = getCookie("token");
+    if (!token) {
+      console.log("No token found in cookies");
+      return;
+    }
+
+    try {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/remaining-links`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      console.log("Remaining links response:", response.data);
+
+      // BE trả về remaining: "Infinity" dưới dạng string
+      setRemainingLinks(response.data.remaining === "Infinity" ? null : response.data.remaining);
+      setIsPro(response.data.remaining === "Infinity");
+      console.log(`isPro: ${response.data.remaining === "Infinity"}, remainingLinks: ${response.data.remaining === "Infinity" ? null : response.data.remaining}`);
+    } catch (err) {
+      console.error("Failed to fetch remaining links:", err);
+    }
+  };
 
   useEffect(() => {
-    const fetchRemainingLinks = async () => {
-      const token = getCookie("token");
-      if (!token) return;
+    fetchRemainingLinks();
 
-      try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/remaining-links`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setRemainingLinks(response.data.remaining === Infinity ? null : response.data.remaining);
-      } catch (err) {
-        console.error("Failed to fetch remaining links:", err);
-      }
+    const handleUpgradeComplete = () => {
+      console.log("Received upgrade-complete event, fetching remaining links");
+      fetchRemainingLinks();
     };
 
-    fetchRemainingLinks();
+    window.addEventListener("upgrade-complete", handleUpgradeComplete);
+
+    return () => {
+      window.removeEventListener("upgrade-complete", handleUpgradeComplete);
+    };
   }, []);
 
   const handleShorten = async () => {
@@ -66,7 +86,7 @@ const CreateShortLink = () => {
     setFieldErrors({});
 
     try {
-      const response = await api.post("/links", {
+      const response = await api.post("/api/links", {
         originalUrl,
         slug: slug || undefined,
         password: password || undefined,
@@ -79,11 +99,7 @@ const CreateShortLink = () => {
       setQrCode(response.data.qrCode || "");
       setOpenPopup(true);
 
-      // Cập nhật số link còn lại
-      const remainingResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/remaining-links`, {
-        headers: { Authorization: `Bearer ${getCookie("token")}` },
-      });
-      setRemainingLinks(remainingResponse.data.remaining === Infinity ? null : remainingResponse.data.remaining);
+      fetchRemainingLinks();
     } catch (err: any) {
       if (err.response && err.response.data) {
         const { message, errors } = err.response.data;
@@ -128,7 +144,7 @@ const CreateShortLink = () => {
         <Typography variant="h5" fontWeight="bold" gutterBottom>
           Tạo mới link rút gọn
         </Typography>
-        {remainingLinks !== null && (
+        {!isPro && remainingLinks !== null && (
           <Typography variant="body2" color="text.secondary" sx={{ mt: 1, mb: 2 }}>
             Bạn còn {remainingLinks} link có thể tạo trong tháng này.{" "}
             <a href="#" style={{ color: "#007bff", textDecoration: "none" }} onClick={handleUpgrade}>
