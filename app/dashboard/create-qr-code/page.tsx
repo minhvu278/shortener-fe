@@ -39,7 +39,7 @@ export default function CreateQrCodePage() {
   const [openLimitPopup, setOpenLimitPopup] = useState(false);
   const [remainingLinks, setRemainingLinks] = useState<number | null>(null);
 
-  const defaultQrCodeUrl = "http://103.221.221.110:5000";
+  const defaultQrCodeUrl = "https://betterbytesvn.cloud";
 
   useEffect(() => {
     const fetchRemainingLinks = async () => {
@@ -73,7 +73,7 @@ export default function CreateQrCodePage() {
     setFieldErrors({});
 
     try {
-      await api.post("/qr-codes", {
+      await api.post("/api/qr-codes", {
         originalUrl,
         title: title || undefined,
         createShortLink,

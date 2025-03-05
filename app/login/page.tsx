@@ -18,7 +18,7 @@ const LoginPage = () => {
     setLoading(true);
     setError("");
     try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, { email, password });
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`, { email, password });
       const { access_token } = response.data;
 
       document.cookie = `token=${access_token}; path=/; max-age=3600`;

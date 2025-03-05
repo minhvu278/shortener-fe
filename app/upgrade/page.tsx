@@ -122,7 +122,7 @@ export default function UpgradePage() {
                   const upgradeResult = await upgradeResponse.json();
 
                   if (upgradeResult.success) {
-                    const refreshResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/refresh-token`, {
+                    const refreshResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/refresh-token`, {
                       method: "POST",
                       headers: {
                         "Content-Type": "application/json",

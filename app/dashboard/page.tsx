@@ -26,7 +26,7 @@ const DashboardPage = () => {
     const fetchUser = async () => {
       try {
         const token = getCookie("token");
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUser(response.data);

@@ -86,7 +86,7 @@ const CreateShortLink = () => {
     setFieldErrors({});
 
     try {
-      const response = await api.post("/links", {
+      const response = await api.post("/api/links", {
         originalUrl,
         slug: slug || undefined,
         password: password || undefined,
